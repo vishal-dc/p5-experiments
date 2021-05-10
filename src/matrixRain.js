@@ -1,10 +1,12 @@
-import {CONSTANTS, mouseClicked, doubleClicked} from "./index";
+import {CONSTANTS, mouseClicked, doubleClicked, windowOnBlur, windowOnFocus} from "./index";
 
 const getChar = (p) => String.fromCharCode(p.random(CONSTANTS.CHAR_LOW, CONSTANTS.CHAR_HIGH));
 
 class RainColumn {
-    constructor(p) {
+    constructor(p, alphas) {
+        //todo sizes, bounds, etc. can also be injected instead of relying on constants.
         this.p = p;
+        this.alphas = alphas;
         this.colSize = Math.round(p.random(CONSTANTS.MIN_ARRAY_SIZE, CONSTANTS.MAX_ARRAY_SIZE));
 
         this.size = Math.round(p.map(this.colSize, CONSTANTS.MIN_ARRAY_SIZE,
@@ -40,10 +42,10 @@ class RainColumn {
             this.p.textSize(this.size);
 
             if (i !== this.colSize - 1) {
-                this.p.fill(`rgba(0,255,0,${this.p.alphas[i]})`);
+                this.p.fill(`rgba(0,255,0,${this.alphas[i]})`);
             } else {
                 this.p.textSize(this.size + 2);
-                this.p.fill(`rgba(255, 255, 255,${this.p.alphas[i]})`);
+                this.p.fill(`rgba(255, 255, 255,${this.alphas[i]})`);
             }
             this.p.text(this.chars[i], this.x, y);
         }
@@ -60,30 +62,24 @@ class RainColumn {
 
 }
 
-const matrixRain = (p) => {
-    p.alphas = Array.from({length: CONSTANTS.MAX_ARRAY_SIZE},
-        (_, i) => p.map(i, 0, CONSTANTS.MAX_ARRAY_SIZE, 0.1, 1));
+class MatrixRain {
+    constructor(p) {
+        this.alphas = Array.from({length: CONSTANTS.MAX_ARRAY_SIZE},
+            (_, i) => p.map(i, 0, CONSTANTS.MAX_ARRAY_SIZE, 0.1, 1));
+        this.cols = Array.from({length: CONSTANTS.COLS}, () => new RainColumn(p, this.alphas));
+        this.p = p;
+    }
 
-    p.cols = Array.from({length: CONSTANTS.COLS}, () => new RainColumn(p));
+    setup() {
+        this.p.background(0);
+    }
 
-    p.setup = () => {
-        p.frameRate(CONSTANTS.FRAME_RATE);
-        p.createCanvas(CONSTANTS.CANVAS_SIZE, CONSTANTS.CANVAS_SIZE);
-        p.background(0);
-        p.isPaused = false;
-    };
+    draw() {
+        this.p.background('rgba(0,0,0,0.1)');
+        this.cols.forEach(c => c.draw());
+    }
 
-    p.draw = () => {
-        p.background('rgba(0,0,0,0.1)');
-        if(p.focused && !p.isPaused)
-            p.cols.forEach(c => c.draw());
-
-    };
-
-    p.mouseClicked = () => mouseClicked(p);
-    p.doubleClicked = () => doubleClicked(p);
-
-};
+}
 
 
-export default matrixRain;
+export default MatrixRain;
