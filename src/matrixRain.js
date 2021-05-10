@@ -70,7 +70,7 @@ const matrixRain = (p) => {
         p.frameRate(CONSTANTS.FRAME_RATE);
         p.createCanvas(CONSTANTS.CANVAS_SIZE, CONSTANTS.CANVAS_SIZE);
         p.background(0);
-        p.isPaused = !p.isPaused
+        p.isPaused = false;
     };
 
     p.draw = () => {
