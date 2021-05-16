@@ -40,12 +40,12 @@ class RainColumn {
             this.p.fill(`rgba(0, 0, 0, 0.9)`);
             this.p.square(this.x, y, this.size);
             this.p.textSize(this.size);
-
+            let alpha = this.alphas[i]
             if (i !== this.colSize - 1) {
-                this.p.fill(`rgba(0,255,0,${this.alphas[i]})`);
+                this.p.fill(`rgba(0,255,0,${alpha})`);
             } else {
                 this.p.textSize(this.size + 2);
-                this.p.fill(`rgba(255, 255, 255,${this.alphas[i]})`);
+                this.p.fill(`rgba(255, 255, 255,${alpha})`);
             }
             this.p.text(this.chars[i], this.x, y);
         }
