@@ -1,20 +1,36 @@
 let graphics;
 let image;
-
 let x = 0, z = 0;
-// let font;
-//
-// function preload() {
-//     font = loadFont('assets/inconsolata.otf');
-// }
+let font;
+let initialized = false;
+
+function preload() {
+    font = loadFont('../assets/Roboto-Light.ttf');
+}
 
 function setup() {
     createCanvas(windowWidth, windowHeight, WEBGL);
     graphics = createGraphics(windowWidth, windowHeight);
     image = new MatrixRain(graphics);
     image.setup();
+    textFont(font);
+    textSize(30);
+    textAlign(CENTER, CENTER);
 }
 
+function move() {
+    initialized = true;
+    if (x > -windowWidth / 2 && (keyCode === LEFT_ARROW || keyCode === 65)) {
+        x -= 15;
+    } else if (x < windowWidth / 2 && (keyCode === RIGHT_ARROW || keyCode === 68)) {
+        x += 15;
+    } else if (keyCode === UP_ARROW || keyCode === 87) {
+        z -= 10;
+    } else if (z < (height / 2) / tan(PI / 6) && (keyCode === DOWN_ARROW || keyCode === 83)) {
+        z += 10;
+    }
+
+}
 
 function draw() {
     background(0);
@@ -23,21 +39,16 @@ function draw() {
     let mapMouseX = mouseX - windowWidth / 2;
     let mapMouseY = mouseY - windowHeight / 2;
 
-    if (keyIsPressed) {
-        if (x > -windowWidth /2 && (keyCode === LEFT_ARROW || keyCode === 65 )) {
-            x -= 15;
-        } else if (x < windowWidth /2 && (keyCode === RIGHT_ARROW || keyCode === 68)) {
-            x += 15;
-        } else if (keyCode === UP_ARROW || keyCode === 87) {
-            z -= 10;
-        } else if (z < (height / 2) / tan(PI / 6) && (keyCode === DOWN_ARROW || keyCode === 83)) {
-            z += 10;
-        }
+    if (!initialized) {
+        text('move mouse change direction', 0, 0);
+        text('A, S, D and W keys to move', 0, 50);
     }
 
+    if (keyIsPressed) {
+        move()
+    }
 
-    camera(x, 0, (height / 2) / tan(PI / 6)  + z, mapMouseX+ x , mapMouseY, 0, 0, 1, 0);
-
+    camera(x, 0, (height / 2) / tan(PI / 6) + z, mapMouseX + x, mapMouseY, 0, 0, 1, 0);
     texture(graphics);
 
     // front plane
@@ -45,7 +56,6 @@ function draw() {
     translate(0, 0, -windowWidth / 2);
     plane(windowWidth, windowHeight);
     pop();
-
 
     // bottom plane
     push();
@@ -80,8 +90,7 @@ function draw() {
 }
 
 const CONSTANTS = {
-    FRAME_RATE: 30,
-    COLS: 25,
+    COLS: 40,
     CHAR_LOW: 0x3030,
     CHAR_HIGH: 0x31D0,
     MAX_ARRAY_SIZE: 50,
@@ -90,7 +99,6 @@ const CONSTANTS = {
     MAX_FONT_SIZE: 28,
     MIN_SPEED: 4,
     MAX_SPEED: 8,
-    CANVAS_SIZE: 500
 
 };
 
@@ -102,7 +110,7 @@ class RainColumn {
         this.colSize = Math.round(random(CONSTANTS.MIN_ARRAY_SIZE, CONSTANTS.MAX_ARRAY_SIZE));
         this.speed = random(CONSTANTS.MIN_SPEED, CONSTANTS.MAX_SPEED);
         this.chars = Array.from({length: this.colSize}, getChar);
-        this.size = 20;//map(this.x,0, windowWidth, CONSTANTS.MIN_FONT_SIZE, CONSTANTS.MAX_FONT_SIZE);
+        this.size = 20;
         this.resetX();
         this.resetY();
         this.resetAlpha();
