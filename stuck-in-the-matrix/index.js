@@ -16,6 +16,7 @@ function setup() {
     textFont(font);
     textSize(30);
     textAlign(CENTER, CENTER);
+
 }
 
 function move() {
@@ -24,9 +25,9 @@ function move() {
         x -= 15;
     } else if (x < windowWidth / 2 && (keyCode === RIGHT_ARROW || keyCode === 68)) {
         x += 15;
-    } else if (keyCode === UP_ARROW || keyCode === 87) {
+    } else if ((z >= -(height/2/tan(PI/6)) ) &&(keyCode === UP_ARROW || keyCode === 87) ){
         z -= 10;
-    } else if (z < (height / 2) / tan(PI / 6) && (keyCode === DOWN_ARROW || keyCode === 83)) {
+    } else if ((z <= 0 ) && (keyCode === DOWN_ARROW || keyCode === 83)) {
         z += 10;
     }
 
